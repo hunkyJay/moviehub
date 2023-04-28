@@ -1,0 +1,198 @@
+{% extends "movie_web/base.html" %}
+
+{% block main_body %}<!-- Content Header (Page header) -->
+<section class="content-header">
+      <h1>
+        User Profile
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+                <h2 class="box-title"> Type Edited Info</h2>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'customer_update' %}" method="post" onsubmit="return checkFrom()">
+                {% csrf_token %}
+
+                 <div class="box-body">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">Username:</label>
+                         <div class="col-sm-4">
+                         <input type="text" name="username" class="form-control" id="username" value="{{ customer.username }}" readonly="true">
+                             <small class="error-message" style="color: red"></small>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">Password:</label>
+                         <div class="col-sm-4">
+                         <input type="text" name="password" class="form-control" id="password" placeholder="keep empty if not changing password">
+                             <small class="error-message" style="color: red"></small>
+                         </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="name" class="col-sm-2 control-label">Name:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="name" class="form-control" id="name" value="{{ customer.name }}" >
+                     <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="email" class="col-sm-2 control-label">Email:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="email"  class="form-control" id="email" value="{{ customer.email }}">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="col-sm-2 control-label">Phone:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="phone" class="form-control" id="phone" value="{{ customer.phone }}" >
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">Bank Card:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="bank_card" class="form-control" id="bank_card" value="{{ customer.bank_card }}" readonly="true" >
+                    <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+
+
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary" name="update" style="margin-right: 20px;">update</button>
+                  <a type="button" href="{% url 'customer_home' %}" class="btn btn-primary" name="cancel" style="margin-right: 150px;">Cancel</a>
+                  <a type="button" onclick="bindCard()" class="btn btn-primary" name="bind">Bind Bank Card</a>
+                </div>
+              </div>
+
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+            <script>
+                const password = document.getElementById("password")
+                const name = document.getElementById("name")
+                const phone = document.getElementById("phone")
+                const email = document.getElementById("email")
+                const bankcard = document.getElementById("bank_card")
+                //Bank card binding check
+                window.onload = function(){
+                  if(bankcard.value =='None' || bankcard.value.length == 0){
+                    Modal.alert({
+                      msg: "Need to bind your bank account before using the system to book tickets.",
+                      title: 'Bind card alert',
+                      btnok: 'ok',
+                    }).on(function (e) {});
+                  }
+                }
+                
+                function checkFrom(){
+                    const passwordValue = password.value.trim()
+                    const nameValue = name.value.trim();
+                    const phoneValue = phone.value;
+                    const emailValue = email.value.trim();
+                    const err = [];
+
+                    if(passwordValue.length > 0 && passwordValue.length < 8){
+                        err.push("error")
+                        setError(password,"the length of password must be larger than 8 characters")
+                    }else {
+                        removeError(password)
+                    }
+
+                    if (nameValue == ""){
+                        setError(name,"the name cannot be empty")
+                        err.push("error")
+                    }else if(nameValue.length > 20){
+                        err.push("error")
+                        setError(name,"the length of name must be less than 20 characters")
+                    }else {
+                        removeError(name)
+                    }
+
+                    if (!isNumber(phoneValue)) {
+                        err.push("error")
+                        setError(phone, "the phone must be number")
+                    }else {
+                        removeError(phone)
+                    }
+
+                    if ( !isValidEmail(emailValue)) {
+                        err.push("error")
+                        setError(email, "the format of email is wrong")
+                    }else {
+                        removeError(email)
+                    }
+
+                    if (err.length > 0) {
+                        return false
+                    }
+                    return true
+                }
+
+                function isNumber(element){
+                     let regPos = /^[0-9]*[1-9][0-9]*$/;
+                    if(regPos.test(element) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function isValidEmail(email){
+                    let regPos = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
+                    if(regPos.test(email) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function setError(element,msg){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = msg
+                }
+
+                function removeError(element){
+                   const element_par = element.parentElement;
+                   const errMsg = element_par.querySelector('.error-message');
+                   errMsg.textContent = ' '
+                }
+
+                function bindCard(){
+                  var card = prompt("Please enter your bank card","");
+                  if(!isNumber(card)){
+                    alert("Binding failed.")
+                  }else{
+                    alert("Bind to bank card" + card);
+                    bankcard.value = card;
+                  }
+                }
+            </script>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "my_admin/base.html" %}
+
+{% block main_body %}<!-- Content Header (Page header) -->
+<section class="content-header">
+      <h1>
+        Post Announcement
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+                <h2 class="box-title"> Type Announcement Info</h2>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'admin_announcement_insert' %}" method="post" enctype="multipart/form-data" onsubmit="return check()">
+                {% csrf_token %}
+
+              <div class="box-body">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Announcement Content:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="content" class="form-control" id="content" placeholder="less than 255 characters">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary" >submit</button> &nbsp;
+                  <button type="reset" class="btn btn-default">reset</button>
+                </div>
+              </div>
+
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+            <script>
+                const content = document.getElementById("content");
+
+                function check() {
+                    const contentValue = content.value.trim();
+                    const err = [];
+                    if (contentValue == ""){
+                        setError(content,"the content cannot be empty")
+                        err.push("error")
+                    }else if(contentValue.length > 255){
+                        err.push("error")
+                        setError(content,"the length of content must be less than 255 characters")
+                    }else {
+                        removeError(content)
+                    }
+                    if (err.length > 0) {
+                        return  false
+                    }
+                    return true
+                }
+
+                function setError(element,msg){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = msg
+                }
+
+                function removeError(element){
+                   const element_par = element.parentElement;
+                   const errMsg = element_par.querySelector('.error-message');
+                   errMsg.textContent = ' '
+                }
+            </script>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

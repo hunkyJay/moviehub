@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #180303;
+    background: #250d0b;
+}
+
+
+#screen{
+    display: block;
+    width: 700px;
+    color: red;
+    font-weight: bold;
+    background-color: #FFFFFF;
+    border: 3px solid #af1313;
+    text-align: center;
+    margin: 10px auto 20px auto;
+}
+#seats{
+    border: 1px solid green;
+    width: 800px;
+    margin: auto auto;
+    padding: 10px;
+    text-align: center;
+    background: white;
+}
+.seat {
+    float: left;
+    width: 60px;
+    box-sizing: border-box;
+    color: #676767;
+    padding: 1px;
+    height: 30px;
+    background: #D8D8D8;
+    border: 1px solid #979797;
+    margin: 8px;
+    border-bottom: 3px solid #F35E4F;
+    cursor: pointer;
+}
+.seatsRaw {
+    display: flex;
+    justify-content: center;
+}
+#booking_desc {
+    width: 550px;
+    background-color: #3C3636;
+    color: #fafafa;
+    margin: 30px auto;
+    padding: 10px;
+    display: table;
+    }
+.booking_left, .booking_right {
+    width:250px;
+    float:left;
+    }
+#total span {
+    font-size: 16px;
+    color: burlywood;
+    }
+#errMsg{
+    color: #FF7777;
+    }

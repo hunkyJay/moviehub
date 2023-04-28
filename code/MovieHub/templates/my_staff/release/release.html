@@ -1,0 +1,65 @@
+{% extends 'my_staff/base.html' %}
+
+{% block main_body %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Release the movie
+    </h1>
+</section>
+
+
+<section>
+
+    <h1>Choose the release date</h1>
+
+    <form action="/action_page.php">
+        <div class="box-body">
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Movie Id:</label>
+                <div class="col-sm-4">
+                    <input type="text" name="staffId" class="form-control" id="releaseId" value="1" readonly="true">
+                    <small class="error-message" style="color: red"></small>
+                </div>
+            </div>
+
+        </div>
+        <div class="box-body">
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Room ID:</label>
+                <div class="col-sm-4">
+                    <select></select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="box-body">
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Price:</label>
+                <div class="col-sm-4">
+                    <select></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="box-body">
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">Movie release time:</label>
+                <div class="col-sm-4">
+                    <input type="datetime-local" id="releasetime" name="releasetime">
+                    <input type="submit">
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+
+</section>
+<!-- /.content -->
+
+{% endblock %}

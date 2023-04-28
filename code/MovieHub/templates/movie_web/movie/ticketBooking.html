@@ -1,0 +1,269 @@
+{% extends "movie_web/base.html" %}
+{% load static %}
+
+{% block head_block %}
+<link rel="stylesheet" href="{% static 'movie_web/seatStyle.css'%}">
+<script src="{% static 'my_admin/bower_components/jquery/dist/jquery.min.js'%}"></script>
+{% endblock %}
+
+{% block main_body %}   
+
+
+     <!-- Content Header (Page header) -->
+    <section class="content-header" style="color: #5372fb;font-weight: bold; font-style: italic;">
+        <h4>
+            {{movie_name}}
+            Room: {{room_id}}
+        </h4>
+        <h4>
+            {{release_time}}
+        </h4>
+    </section>
+
+            <div style="width:850px;margin: auto auto;">
+                <span id='screen'>
+                 <p>
+                    Screen
+                </p>
+                </span>
+                <div id="seats">
+                    {% for row in seat_list %}
+                    <div class="seatsRaw">
+                        {% for seat in row %}
+                        {% if seat.is_available == 1 %}
+                        <div class="seat occupied"></div>
+                        {% else %}
+                        <div class="seat"></div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+    
+                  <div id="booking_desc">
+                    <div class="booking_left">
+                        <p style="color: #FBBC53;font-weight: bold; font-size: larger;">Selected Seats </p>
+                        <div id="selected_seat"></div>
+                        <br>
+                        <button id="bookButton" type="button" style="color: #d953fb;" onclick="book()">Book</button>
+                        <div id="errMsg"></div>
+                    </div>
+    
+                    <div class="booking_right">Ticket Price: {{ price }}
+                        <br><br>
+                        <div id="total">Total Cost：<span> 0 </span></div>
+                    </div>
+                 </div>
+            </div>
+        
+            <script>
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            var csrftoken = getCookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+
+
+                const seatMap = new Map();
+                // const seatsBooking = [];
+                var release = {{release_id}};
+                var seats_content ='';
+                
+                $(document).ready(function(){
+                                var seat_num ;
+                                var total_cost = 0 ;
+                                var pricePerTicked = {{ price }};
+                                var maximumSeats = 4;
+                
+                                $('#bookButton').hide(); // Hide the book button
+                
+                                $('.seat').each(function() {       
+                                    var column_num = parseInt( $(this).index() ) + 1;
+                                    var row_num = parseInt( $(this).parent().index() )+1;    
+                                    seat_num = row_num+"-"+column_num ;  
+                                    $(this).text(seat_num); // seat number
+                                    $(this).addClass("seat"+seat_num); //add css
+                                    if($(this).hasClass('occupied')){
+                                        $(this).css('background-color','#FF0000'); // this seat has been occupied
+                                    }
+                                });
+                
+                                $("#seats .seat").click(function() {  
+                                        $('#errMsg').html('');
+                                        if($(this).hasClass('select')){ // check slected
+                                            $(this).removeClass('select'); //remove css
+                                            $(this).css('background-color','#D8D8D8'); // reload adding css
+                
+                                            var currentSeatClass = $(this).attr('class').split(' ')[1]; 
+                
+                                            console.log(currentSeatClass);
+                                             $( "#selected_seat ."+currentSeatClass ).remove();
+                                             
+                                             seatMap.delete(currentSeatClass);
+                
+                                        }else if($(this).hasClass('occupied')){
+
+                                        }else if($(".your_selected_seat").length<maximumSeats && !$(this).hasClass('select')){ // check number of seats
+                                            $(this).css('background-color','#71DCAA'); // add color
+                                            $(this).addClass("select"); // add css
+                
+                
+                                            var column_num = parseInt( $(this).index() ) + 1;
+                                            var row_num = parseInt( $(this).parent().index() )+1;    
+                                            $( "#selected_seat" ).append("<span class='your_selected_seat seat"+row_num+"-"+column_num+" '> Seat Number: <b style='color:#EAABFF'>" + row_num+"-"+column_num +"</b> </br></span>");
+                                            var currentSeatClass = $(this).attr('class').split(' ')[1];
+                                            seatMap.set(currentSeatClass,currentSeatClass)
+                                        }else {
+                                            $('#errMsg').html('Your selection is over the limit.');    
+                                        }
+                
+                                        if($(".your_selected_seat").length){
+                                            $('#bookButton').fadeIn(1000);
+                                        }else {
+                                            $('#bookButton').fadeOut(1000);
+                                        }
+                                        //Get total cost
+                                        total_cost = $(".your_selected_seat").length * pricePerTicked;
+                                        $('#total > span').html(total_cost);
+                                });
+            
+                });
+
+                //Js http post
+
+                // function httpPost(URL, PARAMS) {
+                //     var temp = document.createElement("form");
+                //     temp.action = URL;
+                //     temp.method = "post";
+                //     temp.style.display = "none";
+                
+                //     for (var x in PARAMS) {
+                //          var opt = document.createElement("textarea");
+                //          opt.name = x;
+                //          opt.value = PARAMS[x];
+                //          temp.appendChild(opt);
+                //         }
+                    
+                //     document.body.appendChild(temp);
+                //     temp.submit();
+                //     return temp;
+                // }
+
+
+                // function seatPost(){
+                //     for (let[key,value] of seatMap){
+                //         console.log("预定座位"+value);
+                //         seatsBooking.push(value);
+                //     }
+
+                //     var release = {{release_id}};
+
+                //     // var params ={
+                //     //     "release": release,
+                //     //     "seats": seatsBooking,
+                //     // };
+
+                //     var httpUrl = "{% url 'customer_book_movie' %}"
+                //     httpPost(httpUrl, params)
+                // }
+
+
+                function book(){
+                    const seatLen = seatMap.size
+                    let count = 1
+                    for (let[key,value] of seatMap){
+                        console.log("booked seats "+value);
+                        // seatsBooking.push(value);
+                        seats_content = seats_content + value;
+                        if (count < seatLen){
+                           seats_content = seats_content + " "
+                        }
+                        count++;
+                    }
+                    
+                    let booking_confirm = 'Confirm to use the bank card ' + {{ bank_account }} +' to pay?'
+                    Modal.confirm({
+                            msg: booking_confirm,
+                            title: 'payment confirmation',
+                            btnok: 'confirm',
+                            btncl: 'cancel'
+                        }).on(function (e){
+                            if (e) {
+                                $.ajax({
+                                    type:'post',
+                                    url:"/movie_web/movie/book",
+                                    dataType:'json',
+                                    data:{
+                                        csrfmiddlewaretoken: csrftoken,
+                                        release_id:release,
+                                        seat_content:seats_content,
+                                    },
+                    
+                                    async: false,
+                                    success:function(res){
+                                        Modal.alert({
+                                            msg: res['info'],
+                                            title: 'book result',
+                                            btnok: 'ok',
+                                        }).on(function (e){
+                                            window.location.href = '/movie_web/order/1'
+                                        })
+                                    },
+                                });
+                            }
+                        })
+                
+                
+                //Js ajax post
+
+                // $.ajax({
+                //     type:'post',
+                //     url:"/movie_web/movie/book",
+                //     dataType:'json',
+                //     data:{
+                //         csrfmiddlewaretoken: csrftoken,
+                //         release_id:release,
+                //         seat_list:seats_content,
+                //     },
+                    
+                //     async: false,
+                //     success:function(res){
+                //         Modal.alert({
+                //             msg: res['info'],
+                //             title: 'book result',
+                //             btnok: 'ok',
+                //         }).on(function (e){
+                //             window.location.href = '/movie_web'
+                //         })
+                //     },
+                // });
+            }
+            </script>
+    
+
+{% endblock %}

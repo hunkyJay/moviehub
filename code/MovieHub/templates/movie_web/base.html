@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>MovieHub</title>
+  <!-- Responsive Layout-->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="{% static 'movie_web/bower_components/bootstrap/dist/css/bootstrap.min.css'%}">
+  <!-- Pictographic font -->
+  <link rel="stylesheet" href="{% static 'movie_web/bower_components/font-awesome/css/font-awesome.min.css'%}">
+  <!-- icon -->
+  <link rel="stylesheet" href="{% static 'movie_web/bower_components/Ionicons/css/ionicons.min.css'%}">
+  <!-- style -->
+  <link rel="stylesheet" href="{% static 'movie_web/dist/css/AdminLTE.min.css'%}">
+  <!-- AdminLTE skin -->
+  <link rel="stylesheet" href="{% static 'movie_web/dist/css/skins/skin-blue.min.css'%}">
+  <!--[if lt IE 9]>
+  <script src="{% static 'my_admin/local/js/html5shiv.min.js'%}"></script>
+  <script src="{% static 'my_admin/local/js/respond.min.js'%}"></script>
+  <![endif]-->
+  <!-- Google Font -->
+  <link rel="stylesheet" href="{% static 'movie_web/local/css/google_fonts.css'%}">
+  {% block head_block %}
+  {% endblock %}
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <!-- Main Header  -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <a href="#" class="logo">
+      <!--  mini 50x50 pixels -->
+      <span class="logo-mini"><b></b></span>
+      <!-- logo title -->
+      <span class="logo-lg"><b>MovieHub User</b></span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+
+      <!-- Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+
+          <!-- Notifications Menu  -->
+          <li class="dropdown notifications-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">{{ numOfTodayAnnouncement }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">Here are your new announcements</li>
+              <li class="footer"><a href="{% url 'customer_announcement_index' 1 %}">Check it </a></li>
+            </ul>
+          </li>
+
+          <!-- User Account Menu -->
+          <li class="dropdown user user-menu">
+            <!-- Menu Toggle Button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <!-- The user image in the navbar-->
+              <img src="{% static 'movie_web/dist/img/user1-128x128.jpg'%}" class="user-image" alt="User Image">
+              <!-- hidden-xs hides the username on small devices so only the image appears. -->
+              <span class="hidden-xs">{{ request.session.logineduser.name }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- The user image in the menu -->
+              <li class="user-header">
+                <img src="{% static 'movie_web/dist/img/user1-128x128.jpg'%}" class="img-circle" alt="User Image">
+                <p>
+                  {{ request.session.logineduser.name }}
+                  <small>User</small>
+                </p>
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href= "{% url 'customer_edit' %}" class="btn btn-default btn-flat">Personal Info</a>
+                </div>
+                <div class="pull-right">
+                  <a href="{% url 'customer_logout' %}" class="btn btn-default btn-flat">log out</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- leat nav bar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{% static 'movie_web/dist/img/user1-128x128.jpg'%}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ request.session.customer.name }}</p>
+          <!-- Status -->
+          <a href="{% url 'customer_home' %}"><i class="fa fa-circle text-success"></i> online</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">Navigation</li>
+        <li class="active"><a href="{% url 'customer_home' %}"><i class="fa fa-home"></i> <span>Home Page</span></a></li>
+
+        <li><a href="{% url 'customer_movie_index' 1 %}"><i class="fa fa-magic"></i> <span>Movies</span></a></li>
+
+        <li class="treeview">
+          <a href="orders.html"><i class="fa fa-shopping-cart"></i> <span>Orders</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="{% url 'customer_order_index' 1 %}"> <i class="fa fa-circle-o"></i>Order History</a></li>
+          </ul>
+        </li>
+
+        <li><a href="{% url 'customer_announcement_index' 1 %}"><i class="fa fa-magic"></i> <span>Notice</span></a></li>
+        <li><a href="{% url 'customer_edit' %}"><i class="fa fa-users"></i> <span>Profile</span></a></li>
+
+      </ul>
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    {% block main_body %}
+      {% endblock %}
+  </div>
+  <!-- /.content-wrapper -->
+
+
+  <!-- side bar background -->
+  <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- hint box -->
+<div id="edu-alert" class="modal">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+        <h5 class="modal-title"><i class="fa fa-exclamation-circle"></i> [Title]</h5>
+      </div>
+      <div class="modal-body small">
+        <p>[Message]</p>
+      </div>
+      <div class="modal-footer" >
+        <button type="button" class="btn btn-primary ok" data-dismiss="modal">[BtnOk]</button>
+        <button type="button" class="btn btn-default cancel" data-dismiss="modal">[BtnCancel]</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- edu-model-end -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'my_admin/bower_components/jquery/dist/jquery.min.js'%}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'my_admin/bower_components/bootstrap/dist/js/bootstrap.min.js'%}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'my_admin/dist/js/adminlte.min.js'%}"></script>
+
+<script src="{% static 'my_admin/dist/js/edu-modal-alert-confirm.js'%}"></script>
+
+
+<script type="text/javascript">
+	function doDel(url) {
+        Modal.confirm({
+            msg: "Are you sure to do this operation？",
+            title: 'Confirm Check',
+            btnok: 'yes',
+            btncl: 'no'
+        }).on(function (e) {
+            if (e) {
+                window.location.href=url
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+{% extends "my_admin/base.html" %}
+
+{% block main_body %}<!-- Content Header (Page header) -->
+<section class="content-header">
+      <h1>
+        Add Movie
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+                <h2 class="box-title"> Type Movie Info</h2>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'admin_movie_insert' %}" method="post" enctype="multipart/form-data" onsubmit="return check()">
+                {% csrf_token %}
+
+              <div class="box-body">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Movie Name:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="less than 40 characters">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                  <div class="form-group">
+                     <label for="inputEmail3" class="col-sm-2 control-label">Poster：</label>
+                      <div class="col-sm-4">
+                        <input type="file" name="poster" />
+                      </div>
+                </div>
+
+                  <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label" >Duration:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="duration"  class="form-control" id="duration" placeholder="must be integer" >
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                     <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label" >Type:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="type"  class="form-control" id="type" placeholder="less than 20 characters" >
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+
+                  <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label" >Cast:</label>
+                     <div class="col-sm-4">
+                        <input type="text" name="cast"  class="form-control" id="cast" >
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                  <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label" >Introduction:</label>
+
+                    <div class="col-sm-4">
+                        <input type="text" name="introduction"  class="form-control" id="introduction" >
+                        <small class="error-message" style="color: red"></small>
+                     </div>
+                </div>
+
+
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary" >submit</button> &nbsp;
+                  <button type="reset" class="btn btn-default">reset</button>
+                </div>
+              </div>
+
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+            <script>
+                const name = document.getElementById("name");
+                const duration = document.getElementById("duration")
+                const type = document.getElementById("type");
+                const cast = document.getElementById("cast");
+                const introduction = document.getElementById("introduction");
+                function check() {
+                    const nameValue = name.value.trim();
+                    const durationValue = duration.value;
+                    const typeValue = type.value.trim();
+                    const castValue = cast.value.trim();
+                    const introductionValue = introduction.value.trim();
+                    const err = [];
+                    if (nameValue == ""){
+                        setError(name,"the name cannot be empty")
+                        err.push("error")
+                    }else if(nameValue.length > 40){
+                        err.push("error")
+                        setError(name,"the length of name must be less than 40 characters")
+                    }else {
+                        removeError(name)
+                    }
+                    if (!isNumber(durationValue)||durationValue>180) {
+                        err.push("error")
+                        setError(duration, "the duration must be integer and less than 180")
+                    }else {
+                        removeError(duration)
+                    }
+                    if (typeValue == ""){
+                        setError(type,"the movie type cannot be empty")
+                        err.push("error")
+                    }else if(typeValue.length > 20){
+                        err.push("error")
+                        setError(type,"the length of name must be less than 20 characters")
+                    }else {
+                        removeError(type)
+                    }
+                   if(introductionValue.length > 255){
+                        err.push("error")
+                        setError(introduction,"the length of introduction must be less than 255 characters")
+                    }else {
+                        removeError(introduction)
+                    }
+                    if(castValue.length > 255){
+                        err.push("error")
+                        setError(cast,"the length of introduction must be less than 255 characters")
+                    }else {
+                        removeError(cast)
+                    }
+                    if (err.length > 0) {
+                        return  false
+                    }
+                    return true
+                }
+
+                 function isNumber(element){
+                     let regPos = /^[0-9]*[1-9][0-9]*$/;
+                    if(regPos.test(element) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function setError(element,msg){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = msg
+                }
+
+                function removeError(element){
+                   const element_par = element.parentElement;
+                   const errMsg = element_par.querySelector('.error-message');
+                   errMsg.textContent = ' '
+                }
+            </script>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

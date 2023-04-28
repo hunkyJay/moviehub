@@ -1,0 +1,129 @@
+{% extends "my_staff/base.html" %}
+
+{% block main_body %}<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Edit Release Information
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content container-fluid">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h2 class="box-title"> Change Time or Price</h2>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                <form class="form-horizontal" action="{% url 'staff_manage_update' %}" method="post" onsubmit="return check()">
+                    {% csrf_token %}
+
+                    <div class="box-body">
+
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">Release Id:</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="releaseId" class="form-control" id="releaseId" value="{{ release.release_id }}" readonly="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">Price:</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="price" class="form-control" id="price" value="{{ release.price }}">
+                                <small class="error-message" style="color: red"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">Original Time:</label>
+                            <div class="col-sm-4">
+                                <input type="text" name="originTime" class="form-control" id="originTime" value="{{ release.release_time }}" readonly="true">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">New Release Time:</label>
+                            <div class="col-sm-4">
+                                <input type="datetime-local" id="releaseTime" name="releaseTime" >
+                                <small class="error-message" style="color: red"></small>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" >update</button> &nbsp;&nbsp;&nbsp;
+                            <a type="button" href="{% url 'staff_manage_index' 1 %}" class="btn btn-primary">Back</a>
+                        </div>
+                    </div>
+
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+            <!-- /.box -->
+            <script>
+
+                const releaseTime = document.getElementById("releaseTime");
+                const price = document.getElementById("price")
+                function check() {
+                    const err = [];
+                    const releaseTimeValue = releaseTime.value
+                    const priceValue = price.value
+                    if( new Date(releaseTimeValue).getTime()-new Date().getTime() < 0 ){
+                        setError(releaseTime,"must be over the current time")
+                        err.push("error")
+                    }else {
+                        removeError(releaseTime)
+                    }
+
+                     if( !isNumber(priceValue)){
+                        setError(price,"price must be positive value")
+                        cosole.log("number")
+                        err.push("error")
+                    }else {
+                        removeError(price)
+                    }
+
+                    if (err.length > 0) {
+                        return  false
+                    }
+                    return true
+                }
+
+                function setError(element,msg){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = msg
+                }
+
+                function removeError(element){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = ' '
+                }
+
+                function isNumber(element){
+                     let regPos =　/^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/;
+                    if(regPos.test(element) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+            </script>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

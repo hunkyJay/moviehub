@@ -1,0 +1,69 @@
+{% extends 'movie_web/base.html' %}
+
+{% block main_body %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        MovieHub Notices Here
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Announcements</h3>
+
+              <div class="box-tools">
+               <form action="{% url 'customer_announcement_index' 1 %}" method="get">
+                <div class="input-group input-group-sm" style="width:200px;">
+                  <input type="text" name="keyword" class="form-control pull-right" placeholder="content">
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tr>
+                  <th>Content</th>
+                  <th>Release Time</th>
+                </tr>
+                 {% for vo in announcementList %}
+                <tr>
+                  <td>{{ vo.content }}</td>
+                    <td>{{ vo.create_time|date:'Y-m-d H:i:s' }}</td>
+                  <td>
+                    <a href="{% url 'customer_announcement_view' vo.announcement_id %}">
+                        <button type="button" class="btn btn-primary"">View</button>
+                    </a>
+                  </td>
+                </tr>
+                  {% endfor %}
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="{% url 'customer_announcement_index' pIndex|add:-1 %}?{{condition|join:'&'}}">&laquo;</a></li>
+                  {% for p in pageNum %}
+                       <li {% if p == pIndex %}class="active"{% endif %}><a href="{% url 'customer_announcement_index' p %}?{{condition|join:'&'}}">{{ p }}</a></li>
+                  {% endfor %}
+
+                <li><a href="{% url 'customer_announcement_index' pIndex|add:1 %}?{{condition|join:'&'}}">&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+
+    </section>
+    <!-- /.content -->
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'my_staff/base.html' %}
+
+{% block main_body %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Movie Information Management
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Movie List</h3>
+
+              <div class="box-tools">
+               <form action="{% url 'staff_movie_index' 1 %}" method="get">
+                <div class="input-group input-group-sm" style="width:200px;">
+                  <input type="text" name="keyword" class="form-control pull-right" placeholder="name/type/cast/introduction">
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tr>
+                  <th>Movie ID</th>
+                  <th>Movie Name</th>
+                  <th>Poster</th>
+                  <th>Type</th>
+                  <th>Cast</th>
+                    <th>Introduction</th>
+                  <th>Edit</th>
+                </tr>
+                 {% for vo in movieList %}
+                <tr>
+                  <td>{{ vo.movie_id }}</td>
+                  <td>{{ vo.movie_name }}</td>
+                    <td><img src="/static/uploads/movie_pic/{{ vo.poster }}" width="60"/></td>
+                    <td>{{ vo.type }}</td>
+                    <td>{{ vo.cast }}</td>
+                    <td width="300">{{ vo.introduction }}</td>
+                  <td>
+                    <a type="button" href="{% url 'staff_movie_edit' vo.movie_id %}" class="btn btn-success btn-xs">
+                      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> edit</a>
+                  </td>
+                </tr>
+                  {% endfor %}
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <a role="button" href="{% url 'staff_movie_add' %}" class="btn btn-primary">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> add movie</a>
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="{% url 'staff_movie_index' pIndex|add:-1 %}?{{condition|join:'&'}}">&laquo;</a></li>
+                  {% for p in pageNum %}
+                       <li {% if p == pIndex %}class="active"{% endif %}><a href="{% url 'staff_movie_index' p %}?{{condition|join:'&'}}">{{ p }}</a></li>
+                  {% endfor %}
+
+                <li><a href="{% url 'staff_movie_index' pIndex|add:1 %}?{{condition|join:'&'}}">&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+
+    </section>
+    <!-- /.content -->
+{% endblock %}

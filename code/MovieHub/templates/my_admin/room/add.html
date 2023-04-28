@@ -1,0 +1,142 @@
+{% extends "my_admin/base.html" %}
+
+{% block main_body %}<!-- Content Header (Page header) -->
+<section class="content-header">
+      <h1>
+        Add Room
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+                <h2 class="box-title"> Add Room Info</h2>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal" action="{% url 'admin_room_insert' %}" method="post" onsubmit="return checkForm()">
+                {% csrf_token %}
+
+              <div class="box-body">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">Room ID:</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="roomId" class="form-control" id="roomId" placeholder="must be integer">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+               <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label" >Row Size:</label>
+
+                  <div class="col-sm-4">
+                    <input type="text" name="rowSize"  class="form-control" id="rowSize" placeholder="max value is 9">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+                   <div class="form-group">
+                  <label for="inputEmail3" class="col-sm-2 control-label">Column Size:</label>
+
+                  <div class="col-sm-4">
+                    <input type="text" name="columnSize"  class="form-control" id="columnSize" placeholder="max value is 9">
+                      <small class="error-message" style="color: red"></small>
+                  </div>
+                </div>
+
+
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <div class="col-sm-offset-2 col-sm-10">
+                  <button type="submit" class="btn btn-primary" >submit</button> &nbsp;
+                  <button type="reset" class="btn btn-default">reset</button>
+                </div>
+              </div>
+
+              <!-- /.box-footer -->
+            </form>
+          </div>
+          <!-- /.box -->
+            <script>
+                const roomId = document.getElementById("roomId")
+                const rowSize = document.getElementById("rowSize")
+                const columnSize = document.getElementById("columnSize")
+
+                function checkForm(){
+                    const roomIdValue = roomId.value
+                    const rowSizeValue = rowSize.value
+                    const columnSizeValue = columnSize.value
+                    const err = [];
+                    if (!isNumber(roomIdValue)) {
+                        err.push("error")
+                        setError(roomId, "the roomId must be integer")
+                    }else {
+                        removeError(roomId)
+                    }
+                    if (!isLessTenNumber(rowSizeValue)) {
+                        err.push("error")
+                        setError(rowSize, "the row size must be integer and less than 10")
+                    }else {
+                        removeError(rowSize)
+                    }
+                    if (!isLessTenNumber(columnSizeValue)) {
+                        err.push("error")
+                        setError(columnSize, "the column size must be integer and less than 10")
+                    }else {
+                        removeError(columnSize)
+                    }
+                    if (err.length > 0) {
+                        return false
+                    }
+                    return true
+                }
+
+                function isNumber(element){
+                     let regPos = /^[0-9]*[1-9][0-9]*$/;
+                    if(regPos.test(element) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function isLessTenNumber(element){
+                    let regPos = /^([1-9])$/;
+                    if(regPos.test(element) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function isValidEmail(email){
+                    let regPos = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
+                    if(regPos.test(email) ){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }
+
+                function setError(element,msg){
+                    const element_par = element.parentElement;
+                    const errMsg = element_par.querySelector('.error-message');
+                    errMsg.textContent = msg
+                }
+
+                function removeError(element){
+                   const element_par = element.parentElement;
+                   const errMsg = element_par.querySelector('.error-message');
+                   errMsg.textContent = ' '
+                }
+            </script>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

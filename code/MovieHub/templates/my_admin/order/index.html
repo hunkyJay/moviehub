@@ -1,0 +1,79 @@
+{% extends 'my_admin/base.html' %}
+
+{% block main_body %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Order Information
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Order List</h3>
+
+              <div class="box-tools">
+               <form action="{% url 'admin_order_index' 1 %}" method="get">
+                <div class="input-group input-group-sm" style="width:150px;">
+                  <input type="text" name="keyword" class="form-control pull-right" placeholder="movie_name">
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tr>
+                  <th>Order Id</th>
+                  <th>Customer</th>
+                  <th>Movie Name</th>
+                  <th>Room Id</th>
+                    <th>Price</th>
+                  <th>Seat Number</th>
+                   <th>Is Cancel</th>
+                </tr>
+                 {% for vo in orderList %}
+                <tr>
+                    <td>{{ vo.order_id }}</td>
+                    <td>{{ vo.customer_username }}</td>
+                    <td>{{ vo.movie_name }}</td>
+                    <td>{{ vo.room_id }}</td>
+                    <td>{{ vo.price }}</td>
+                    <td>{{ vo.seat_num }}</td>
+                    <td>{% if vo.is_cancel == 0 %}
+                        <span>No</span>
+                        {% elif vo.is_cancel == 1 %}
+                       <span>YES</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                  {% endfor %}
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="{% url 'admin_order_index' pIndex|add:-1 %}?{{condition|join:'&'}}">&laquo;</a></li>
+                  {% for p in pageNum %}
+                       <li {% if p == pIndex %}class="active"{% endif %}><a href="{% url 'admin_order_index' p %}?{{condition|join:'&'}}">{{ p }}</a></li>
+                  {% endfor %}
+
+                <li><a href="{% url 'admin_order_index' pIndex|add:1 %}?{{condition|join:'&'}}">&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+
+    </section>
+    <!-- /.content -->
+{% endblock %}

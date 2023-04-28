@@ -1,0 +1,196 @@
+{% extends 'movie_web/base.html' %}
+
+{% block main_body %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        Movie Booking
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Movie List</h3>
+
+              <div class="box-tools">
+               <form action="{% url 'customer_movie_index' 1 %}" method="get">
+                <div class="input-group input-group-sm" style="width:150px;">
+                  <input type="text" name="keyword" class="form-control pull-right" placeholder="movie name">
+                  <div class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+                </form>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table class="table table-hover">
+                <tr>
+                  <th>Movie Name</th>
+                  <th>Poster</th>
+                  <th>Type</th>
+                  <th>Cast</th>
+                  <th>Introduction</th>
+                </tr>
+                 {% for vo in movieList %}
+                <tr class="tbRow" id="{{ vo.movie_id }}" name="{{ vo.movie_name }}">
+                  <td>{{ vo.movie_name }}</td>
+                  <td><img src="/static/uploads/movie_pic/{{ vo.poster }}" width="60"/></td>
+                  <td>{{ vo.type }}</td>
+                  <td>{{ vo.cast }}</td>
+                  <td>{{ vo.introduction }}</td>
+                </tr>
+                  {% endfor %}
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li><a href="{% url 'customer_movie_index' pIndex|add:-1 %}?{{condition|join:'&'}}">&laquo;</a></li>
+                  {% for p in pageNum %}
+                       <li {% if p == pIndex %}class="active"{% endif %}><a href="{% url 'customer_movie_index' p %}?{{condition|join:'&'}}">{{ p }}</a></li>
+                  {% endfor %}
+
+                <li><a href="{% url 'customer_movie_index' pIndex|add:1 %}?{{condition|join:'&'}}">&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+
+    </section>
+	 <section class="content container-fluid">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">Release List</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+              <table id="ReleaseTable" class="table table-hover">
+                <tr>
+                  <th>movie name</th>
+                  <th>type</th>
+                  <th>cast</th>
+                  <th>introduction</th>
+                </tr>
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <ul id="pageUl" class="pagination pagination-sm no-margin pull-right">
+                <li><a>&laquo;</a></li>
+                       <li class="active"><a>1</a></li>
+                <li><a>&raquo;</a></li>
+              </ul>
+            </div>
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
+
+    </section>
+	<script src="/static/my_admin/bower_components/jquery/dist/jquery.min.js"></script>
+	<script>
+	function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+	}
+	var csrftoken = getCookie('csrftoken');
+
+	function csrfSafeMethod(method) {
+	// these HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+	}
+
+	$.ajaxSetup({
+	  beforeSend: function (xhr, settings) {
+		if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+		  xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		}
+	  }
+	});
+  var movie_id = 0;
+  var movie_name = "";
+  function callBack(data){
+    var innerHtml = "<tr><th>Movie name</th><th>Room</th><th>Release Time</th><th></th></tr>";
+    var list = JSON.parse(data.releaseList);
+    for(i=0;i<list.length;i++){
+      //console.log(list[i]);
+      var fields = list[i].fields;
+      // console.log(fields);
+      //innerHtml = innerHtml + "<tr><td>" + movie_name + "</td><td>"+fields.room_id+ "</td><td>"+fields.release_time+"</td><td><a type='button'  href= '{% url 'customer_edit' %}' class='btn btn-success btn-xs'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> book</a></td></tr>";
+      innerHtml = innerHtml + "<tr><td>" + movie_name + "</td><td>"+fields.room_id+ "</td><td>"+fields.release_time+"</td><td><a type='button' href= '/movie_web/loadBooking/" + fields.release_id + "' class='btn btn-success btn-xs'><span class='glyphicon glyphicon-edit' aria-hidden='true'></span> book</a></td></tr>";
+    }
+    innerHtml =  "<tbody>" + innerHtml + "</tbody>"
+    $("#ReleaseTable").html(innerHtml);
+    var pageHtml = "";
+    for(var i in data.pageNum) {
+      pageHtml = pageHtml + "<li";
+      if(data.pageNum[i]==data.pIndex)
+        pageHtml = pageHtml + " class='active'";
+      pageHtml = pageHtml + "><a class='pageA' id = '" + data.pageNum[i]+ "'>" + data.pageNum[i]+"</a></li>"
+    }
+    var leftHtml = "<li><a class='pageA' id = '" + (data.pIndex - 1) +"'>"+ "&laquo;" +"</a></li>";
+    var rightHtml = "<li><a class='pageA' id = '" + (data.pIndex + 1) +"'>"+ "&raquo;" +"</a></li>";
+    pageHtml = leftHtml + pageHtml + rightHtml;
+    //console.log(pageHtml);
+    $("#pageUl").html(pageHtml);
+    $(".pageA").click(function(){
+      var id = $(this).attr("id");
+      var url = "/movie_web/releaseList/" + id;
+      $.ajax({
+        url: url,
+        type: "post",
+        data:{
+          csrfmiddlewaretoken: csrftoken,		
+          movie_id:movie_id
+        },
+        async: false,
+        dataType: "json",
+        success: function (data) { 
+        callBack(data);
+      }
+    });
+  });}
+	$(".tbRow").click(function(){
+		console.log($(this).attr("id"));
+		var csrftoken = getCookie('csrftoken');
+		movie_id = $(this).attr("id");
+    movie_name = $(this).attr("name");
+		$.ajax({
+		url: "/movie_web/releaseList/1",
+		type: "post",
+		data: {
+			csrfmiddlewaretoken: csrftoken,		
+			movie_id:movie_id
+		},
+		async: false,
+		dataType: "json",
+		success: function (data) {  
+        callBack(data);
+			}
+		})});
+	</script>
+    <!-- /.content -->
+{% endblock %}
