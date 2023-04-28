@@ -67,3 +67,15 @@ Please ensure that you has install python3 and have upated your pip to the lates
 
 ##### Running code
 Run  <kbd>python manage.py migrate</kbd> in your terminal.<kbd>cmd</kbd> 
+
+## Contributing
+
+
+## Current contributors
+- Renjie He
+- Dong Tan
+- Victor Guo
+- Wizard Cheng
+- Peddy Zong
+
+If you would like to make improvements to the project, please contact us for permission to contribute. Feel free to dive in!
